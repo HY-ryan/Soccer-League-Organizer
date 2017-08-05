@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,8 @@ public class Manager {
     private Map<String, String> mMenu;
     private BufferedReader mReader;
     private List<Team> mTeams;
-    private Player[] players = Players.load();
+    private Player[] playersArr = Players.load();
+    ArrayList<Player> players = new ArrayList<Player>(Arrays.asList(playersArr));
 
     public Manager() {
         mMenu = new HashMap<String, String>();
@@ -60,17 +62,7 @@ public class Manager {
                         break;
                     case "add":
                         System.out.printf("Available Players:%n%n");
-                        int count = 1;
-                        for (Player player : players) {
-                            String experience;
-                            if (player.isPreviousExperience()) {
-                                experience = "experienced";
-                            } else {
-                                experience = "inexperienced";
-                            }
-                            System.out.printf("%d.) %s %s (%d inches - %s)%n", count, player.getFirstName(), player.getLastName(), player.getHeightInInches(), experience);
-                            count++;
-                        }
+                        addPlayer();
                         break;
                     case "remove":
                         System.out.printf("You chose the remove players option!%n%n");
@@ -119,8 +111,35 @@ public class Manager {
                 count++;
             }
             System.out.printf("------------------------%n");
-            String choice = mReader.readLine();
-            System.out.print(choice);
+        }
+
+        public void addPlayer() throws IOException {
+            int count = 1;
+            for (Player player : players) {
+                String experience;
+                if (player.isPreviousExperience()) {
+                    experience = "experienced";
+                } else {
+                    experience = "inexperienced";
+                }
+            System.out.printf("%d.) %s %s (%d inches - %s)%n", count, player.getFirstName(), player.getLastName(), player.getHeightInInches(), experience);
+            count++;
+            }
+            System.out.printf("%nChoose a player number: %n");
+            String playerChoice = mReader.readLine();
+            int intChoice = Integer.parseInt(playerChoice);
+            int arrChoice = intChoice - 1;
+            Player selectedPlayer = players.get(arrChoice);
+            players.remove(arrChoice);
+            System.out.printf("You selected %s %s.%n", selectedPlayer.getFirstName(), selectedPlayer.getLastName());
+            availableTeams();
+            System.out.printf("What team would you like to add %s %s to?%n", selectedPlayer.getFirstName(), selectedPlayer.getLastName());
+            String teamChoice = mReader.readLine();
+            int intTeamChoice = Integer.parseInt(teamChoice);
+            int arrTeamChoice = intTeamChoice - 1;
+            Team toAdd = mTeams.get(arrTeamChoice);
+            toAdd.addPlayer(selectedPlayer);
+            System.out.printf("You added %s %s to the team %s", selectedPlayer.getFirstName(), selectedPlayer.getLastName(), toAdd.getTeamName());
         }
 
 }
