@@ -65,7 +65,7 @@ public class Manager {
                         addPlayer();
                         break;
                     case "remove":
-                        System.out.printf("You chose the remove players option!%n%n");
+                        removePlayers();
                         break;
                     case "report":
                         availableTeams();
@@ -74,7 +74,7 @@ public class Manager {
                         System.out.printf("You chose the balance option!%n%n");
                         break;
                     case "roster":
-                        System.out.printf("You chose the roster option!%n%n");
+                        viewRoster();
                         break;
                     case "quit":
                         System.out.printf("Have a good season!%n%n");
@@ -113,6 +113,29 @@ public class Manager {
             System.out.printf("------------------------%n");
         }
 
+        public void removePlayers() throws IOException {
+            availableTeams();
+            System.out.print("Which team number would you like to remove a player from?  ");
+            String teamChoice = mReader.readLine();
+            int intTeamChoice = Integer.parseInt(teamChoice);
+            int arrTeamChoice = intTeamChoice - 1;
+            Team teamToRemoveFrom = mTeams.get(arrTeamChoice);
+            List<Player> teamPlayers = teamToRemoveFrom.getPlayers();
+
+            int count = 1;
+            for (Player player : teamPlayers) {
+                System.out.printf("%d.) %s %s%n", count, player.getFirstName(), player.getLastName());
+                count++;
+            }
+
+            System.out.printf("%nChoose a player number: %n");
+            String playerChoice = mReader.readLine();
+            int intChoice = Integer.parseInt(playerChoice);
+            int arrChoice = intChoice - 1;
+            teamToRemoveFrom.removePlayer(arrChoice);
+
+        }
+
         public void addPlayer() throws IOException {
             int count = 1;
             for (Player player : players) {
@@ -139,7 +162,16 @@ public class Manager {
             int arrTeamChoice = intTeamChoice - 1;
             Team toAdd = mTeams.get(arrTeamChoice);
             toAdd.addPlayer(selectedPlayer);
-            System.out.printf("You added %s %s to the team %s", selectedPlayer.getFirstName(), selectedPlayer.getLastName(), toAdd.getTeamName());
+            System.out.printf("You added %s %s to the team %s%n%n", selectedPlayer.getFirstName(), selectedPlayer.getLastName(), toAdd.getTeamName());
+        }
+
+        public void viewRoster() {
+            for (Team team : mTeams) {
+                System.out.printf("Team: %s%n", team.getTeamName());
+                System.out.printf("Coached by: %s%n", team.getCoachName());
+                System.out.print(team.getPlayersAsString());
+            }
+
         }
 
 }
